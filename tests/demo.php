@@ -25,7 +25,7 @@ $password   =   $argv[2];
 $searchq    =   new \projectivemotion\HotelsPro\Query();
 
 $client = new \projectivemotion\HotelsPro\Client($username, $password);
-$client->setDB(new \PDO('sqlite:../util/hotelspro.sqlite'));
+$client->setDB(new \PDO('sqlite:../hotelspro.sqlite'));
 $searchq->setCheckin(date('Y-m-d', time()+60*60*24*7));
 $searchq->setCheckout(date('Y-m-d', time()+60*60*24*7*3));
 $searchq->setClientNationality('us');

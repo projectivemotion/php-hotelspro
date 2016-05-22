@@ -40,7 +40,11 @@ class Client
         $query = $this->getDB()->prepare('SELECT * FROM hotels WHERE name = ?');
         $query->execute([$name]);
 
-        return $query->fetchObject();
+        $hotelObj   =   $query->fetchObject('\\projectivemotion\\HotelsPro\\Hotel');
+        if(!$hotelObj)
+            throw new Exception('Hotel "' . $name . '" not found in HotelsPro Datase');
+
+        return $hotelObj;
     }
 
     protected function getResponse($method, $params = [])
