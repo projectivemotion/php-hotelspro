@@ -14,6 +14,7 @@ class Hotel
     public $country;
     public $zipcode;
     public $address;
+    public $destination;
     public $latitude;
     public $longitude;
     public $currencycode;

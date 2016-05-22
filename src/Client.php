@@ -37,7 +37,10 @@ class Client
 
     public function findHotelByName($name)
     {
-        $query = $this->getDB()->prepare('SELECT * FROM hotels WHERE name = ?');
+        $query = $this->getDB()->prepare('
+  SELECT h.*, d.name as city FROM hotels h
+  INNER JOIN destinations d ON (d.code = h.destination)
+  WHERE h.name = ? LIMIT 1');
         $query->execute([$name]);
 
         $hotelObj   =   $query->fetchObject('\\projectivemotion\\HotelsPro\\Hotel');

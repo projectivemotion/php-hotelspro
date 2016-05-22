@@ -23,7 +23,7 @@ function json_to_csv($jsonarr, $colnames, $fhandle)
 function printcsv($mode, $filename)
 {
     $columns    =   [
-        'hotel'         =>  ['code', 'name', 'country', 'zipcode', 'address', 'latitude', 'longitude', 'currencycode', 'stars', 'hotel_type'],
+        'hotel'         =>  ['code', 'name', 'country', 'zipcode', 'address', 'destination', 'latitude', 'longitude', 'currencycode', 'stars', 'hotel_type'],
         'destination'   =>  ['code', 'country', 'parent', 'name', 'latitude', 'longitude']
     ];
 
