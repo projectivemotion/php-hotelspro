@@ -1,0 +1,20 @@
+{
+  "name": "projectivemotion/php-hotelspro",
+  "description": "HotelsPro PHP Api Implementation",
+  "minimum-stability": "dev",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Amado Martinez",
+      "email": "amado@projectivemotion.com"
+    }
+  ],
+  "autoload": {
+    "psr-4" : {
+      "projectivemotion\\HotelsPro\\": "src/"
+    }
+  },
+  "require": {
+    "projectivemotion/php-scraper-tools": "^0.1.0"
+  }
+}
