@@ -11,7 +11,7 @@ if [ -z "$1" ] ; then
 
 EOL
 
-    echo -e "\t$0 db.sqlite hotels.csv hotels"
+    echo -e "\t$0 db.sqlite hotels.csv|destinations.csv hotels|destinations"
     exit
 fi;
 
@@ -26,7 +26,8 @@ fi;
 sqlite3 "$1" <<EOL
 create table hotels (
     code TEXT PRIMARY KEY ASC,
-    name TEXT, country TEXT,
+    name TEXT,
+    country TEXT,
     zipcode TEXT,
     address TEXT,
     latitude TEXT,
@@ -34,6 +35,14 @@ create table hotels (
     currencycode TEXT,
     stars INTEGER,
     hotel_type INTEGER);
+
+create table destinations (
+    code TEXT PRIMARY KEY ASC,
+    country TEXT,
+    parent TEXT,
+    name TEXT,
+    latitude TEXT, longitude TEXT
+);
 EOL
 
     echo "Created $1"

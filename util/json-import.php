@@ -23,12 +23,14 @@ function json_to_csv($jsonarr, $colnames, $fhandle)
 function printcsv($mode, $filename)
 {
     $columns    =   [
-        'hotel' => ['code', 'name', 'country', 'zipcode', 'address', 'latitude', 'longitude', 'currencycode', 'stars', 'hotel_type']
+        'hotel'         =>  ['code', 'name', 'country', 'zipcode', 'address', 'latitude', 'longitude', 'currencycode', 'stars', 'hotel_type'],
+        'destination'   =>  ['code', 'country', 'parent', 'name', 'latitude', 'longitude']
     ];
 
     $fhandle    =   fopen('php://stdout', 'w');
     switch($mode)
     {
+        case 'destination':
         case 'hotel':
                 json_to_csv(
                     json_decode(file_get_contents($filename)),
@@ -42,7 +44,7 @@ function printcsv($mode, $filename)
 if($argc < 3)
 {
     echo "\nThis prints a csv dump based on a given a list of json filenames:\n\n\tExample:\n\t\t";
-    die("$argv[0] [hotel] file1.json file2.json\n\n");
+    die("$argv[0] [hotel|destination] file1.json file2.json\n\n");
 }
 
 $mode   =   $argv[1];
