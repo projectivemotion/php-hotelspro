@@ -28,5 +28,8 @@ $ php -S 127.0.0.1:8080 <?php echo $argv[0]; ?>
     exit;
 }
 
+
+// To use the WebUi in your project just copy/paste the following two lines and modify to fit your needs.
+
 $pdo    =   new PDO('sqlite:hotelspro.sqlite');
 \projectivemotion\HotelsPro\WebUi::Run('','',$pdo);

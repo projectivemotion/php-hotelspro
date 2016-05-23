@@ -70,7 +70,7 @@ class WebUi
                 $hotels  =   $Client->findHotelsBy([
                     'name'  =>  $params['arguments']['hotelname'],
                     'city'  =>  $params['arguments']['city']
-                ]);
+                ], Client::MATCH_LIKE);
                 if(count($hotels) > 1)
                 {
                     $result['error']    =   'Hotel name/city returned more than 1 hotel.';
@@ -98,7 +98,7 @@ class WebUi
                 $params['pageresults']    =   $Client->findHotelsBy([
                     'name'  =>  $params['arguments']['hotelname'],
                     'city'  =>  $params['arguments']['city']
-                ]);
+                ], Client::MATCH_LIKE);
                 break;
             default:
                 $result =   [ 'mode' => 'Displaying a few random hotels for you..' ];

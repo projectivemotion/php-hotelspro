@@ -12,6 +12,9 @@ namespace projectivemotion\HotelsPro;
 class Client
 {
     const HOTELCLASS    =   '\\projectivemotion\\HotelsPro\\Hotel';
+    const MATCH_EXACT   =   0;
+    const MATCH_LIKE    =   1;
+
     protected $username = '';
     protected $password = '';
 
@@ -63,7 +66,7 @@ class Client
      * @return Hotel[]
      * @throws \Exception
      */
-    public function findHotelsBy($args)
+    public function findHotelsBy($args, $match_type = self::MATCH_EXACT)
     {
         $queryfmt  =   'SELECT
           h.*, coalesce(d1.name, d0.name) as city FROM hotels h
@@ -74,7 +77,15 @@ class Client
         $conditions =   [];
 
         if(isset($args['name']))
-            $conditions[]   =   'h.name = :name';
+        {
+            if(self::MATCH_LIKE    === $match_type)
+            {
+                $conditions[]  =   'h.name LIKE :name';
+                $args['name']   =   '%' . $args['name'] . '%';
+            }else
+                $conditions[]   =   'h.name = :name';
+
+        }
         else
             unset($args['name']);
 
