@@ -21,4 +21,6 @@ class Hotel
     public $stars;
     public $hotel_type;
 
+    // provided by findHotelsBy
+    public $city;
 }

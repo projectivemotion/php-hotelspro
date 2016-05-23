@@ -11,6 +11,7 @@ namespace projectivemotion\HotelsPro;
 
 class Client
 {
+    const HOTELCLASS    =   '\\projectivemotion\\HotelsPro\\Hotel';
     protected $username = '';
     protected $password = '';
 
@@ -43,11 +44,48 @@ class Client
   WHERE h.name = ? LIMIT 1');
         $query->execute([$name]);
 
-        $hotelObj   =   $query->fetchObject('\\projectivemotion\\HotelsPro\\Hotel');
+        $hotelObj   =   $query->fetchObject(self::HOTELCLASS);
         if(!$hotelObj)
             throw new Exception('Hotel "' . $name . '" not found in HotelsPro Datase');
 
         return $hotelObj;
+    }
+
+    public function queryDB($query, $classname = '')
+    {
+        $qstmt  =   $this->getDB()->query($query);
+
+        return $qstmt->fetchAll(\PDO::FETCH_CLASS, $classname ?: self::HOTELCLASS);
+    }
+
+    /**
+     * @param $args
+     * @return Hotel[]
+     * @throws \Exception
+     */
+    public function findHotelsBy($args)
+    {
+        $queryfmt  =   'SELECT h.*, d.name as city FROM hotels h
+          INNER JOIN destinations d ON (d.code = h.destination)
+          WHERE %s';    //h.name = ? LIMIT 1
+
+        $conditions =   [];
+
+        if(isset($args['name']))
+            $conditions[]   =   'h.name = :name';
+        else
+            unset($args['name']);
+
+        if(isset($args['city']) && !empty($args['city']))
+            $conditions[]   =   'd.name = :city';
+        else
+            unset($args['city']);
+
+        $query  =   sprintf($queryfmt, implode(' AND ', $conditions));
+        $stmt   =   $this->getDB()->prepare($query);
+        $exec   =   $stmt->execute($args);
+
+        return $stmt->fetchAll(\PDO::FETCH_CLASS, self::HOTELCLASS);
     }
 
     protected function getResponse($method, $params = [])
@@ -61,8 +99,13 @@ class Client
                 $params ? '?' . http_build_query($params) : ''
             );
 
-        $response   =   file_get_contents($url
-            );
+        $response   =   file_get_contents($url);
+
+        if(!$response)
+        {
+            $error  =   error_get_last();
+            throw new Exception($error['message'], $error['type']);
+        }
 
         return $response;
     }
