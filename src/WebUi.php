@@ -45,6 +45,11 @@ class WebUi
             'arguments' =>  $_POST
         ];
 
+        if(empty($params['arguments']['currency']))
+            $params['arguments']['currency']        =   'EUR';
+        if(empty($params['arguments']['adults']))
+            $params['arguments']['adults']        =   '2';
+
         if($username == '')
         {
             $login  =   self::findSessionLogin($params);
@@ -77,15 +82,16 @@ class WebUi
                     $Query->setCheckout($args['checkout']);
                     $Query->setPax($args['adults']);
                     $Query->setClientNationality('nl');
+                    $Query->setCurrency($args['currency']);
                     $Query->setLimit(10);
                     try {
                         $result = $Client->Search($Query);
                     }catch(Exception $e)
                     {
-                        $result =   $e;
+                        $result =   ['message' => 'An error ocurred.', 'info' => $e ];
                     }
                 }
-                $params['pageresults']  =   $result;
+                $params['pageresults']  =   ['message' => 'Recieved Response from HotelsPro', 'Response' => $result];
                 break;
 
             case 'findHotel':
@@ -118,6 +124,10 @@ class WebUi
             <input type="submit" value="Logout (Reset Credentials.)" />
         </form>
 
+        <form action="?" method="GET">
+            <input type="submit" value="Clear Search" />
+        </form>
+
         <h2>Get Price</h2>
         <form action="?action=getPrice" method="POST">
             <label>Checkin (YYYY-MM-DD): <input type="text" name="checkin" value="<?=
@@ -130,6 +140,8 @@ class WebUi
                 htmlentities( $args['city'], ENT_QUOTES); ?>"/></label>
             <label>Adults: <input type="text" name="adults" value="<?=
                 htmlentities( $args['adults'], ENT_QUOTES); ?>"/></label>
+            <label>Currency: <input type="text" name="currency" value="<?=
+                htmlentities( $args['currency'], ENT_QUOTES); ?>"/></label>
             <label><input type="submit" value="Get Price"/></label>
         </form>
 
@@ -137,7 +149,7 @@ class WebUi
         <form action="?action=findHotel" method="POST">
             <label>Hotel Name: <input type="text" name="hotelname" value="<?=
                 htmlentities( $args['hotelname'], ENT_QUOTES); ?>"/></label>
-            <label>City (Can be empty to find all cities):
+            <label>City (Can be empty.):
                 <input type="text" name="city" value="<?=
                 htmlentities( $args['city'], ENT_QUOTES); ?>"/></label>
             <label><input type="submit" value="Find Hotel"/></label>
@@ -164,7 +176,7 @@ class WebUi
         <br />
         <form action="?action=login" method="POST">
             <label>Username: <input name="username" /></label>
-            <label>Password: <input name="password" /></label>
+            <label>Password: <input name="password" type="password" /></label>
             <input type="submit" value="Login" />
         </form>
 

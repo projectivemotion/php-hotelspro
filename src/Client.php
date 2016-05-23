@@ -65,8 +65,10 @@ class Client
      */
     public function findHotelsBy($args)
     {
-        $queryfmt  =   'SELECT h.*, d.name as city FROM hotels h
-          INNER JOIN destinations d ON (d.code = h.destination)
+        $queryfmt  =   'SELECT
+          h.*, coalesce(d1.name, d0.name) as city FROM hotels h
+          INNER JOIN destinations d0 ON (d0.code = h.destination)
+          LEFT JOIN destinations d1 ON (d1.code = d0.parent)
           WHERE %s';    //h.name = ? LIMIT 1
 
         $conditions =   [];
@@ -77,7 +79,7 @@ class Client
             unset($args['name']);
 
         if(isset($args['city']) && !empty($args['city']))
-            $conditions[]   =   'd.name = :city';
+            $conditions[]   =   '(d0.name = :city or d1.name  = :city)';
         else
             unset($args['city']);
 
@@ -93,7 +95,7 @@ class Client
         $url    =
             sprintf("https://%s:%s@%s%s/%s",
                 urlencode($this->username),
-                ($this->password),
+                urlencode($this->password),
                 $this->api_hostname,
                 $this->api_path . $method,
                 $params ? '?' . http_build_query($params) : ''
