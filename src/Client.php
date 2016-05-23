@@ -89,14 +89,25 @@ class Client
         else
             unset($args['name']);
 
+        $fetch_single   =   false;
+        if(isset($args['code']))
+        {
+            $fetch_single   =   true;
+            $conditions[]   =   'h.code = :code';
+        }else
+            unset($args['code']);
+
         if(isset($args['city']) && !empty($args['city']))
-            $conditions[]   =   '(d0.name = :city or d1.name  = :city)';
+            $conditions[]   =   '(d0.name LIKE :city or d1.name  LIKE :city)';
         else
             unset($args['city']);
 
         $query  =   sprintf($queryfmt, implode(' AND ', $conditions));
         $stmt   =   $this->getDB()->prepare($query);
         $exec   =   $stmt->execute($args);
+
+        if($fetch_single)
+            return $stmt->fetchObject(self::HOTELCLASS);
 
         return $stmt->fetchAll(\PDO::FETCH_CLASS, self::HOTELCLASS);
     }

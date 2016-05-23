@@ -66,18 +66,18 @@ class WebUi
         switch($params['action'])
         {
             case 'getPrice':
-                $result =   [];
                 $hotels  =   $Client->findHotelsBy([
                     'name'  =>  $params['arguments']['hotelname'],
                     'city'  =>  $params['arguments']['city']
                 ], Client::MATCH_LIKE);
-                if(count($hotels) > 1)
-                {
-                    $result['error']    =   'Hotel name/city returned more than 1 hotel.';
-                    $result['hotels']   =   $hotels;
-                }else{
+
+                $hotelcodes =   [];
+                foreach($hotels as $hotelobj) {
+                    $hotelcodes[] = $hotelobj->code;
+                }
+
                     $Query  =   new Query();
-                    $Query->setHotelCode($hotels[0]->code);
+                    $Query->setHotelCode(implode(',', $hotelcodes));
                     $Query->setCheckin($args['checkin']);
                     $Query->setCheckout($args['checkout']);
                     $Query->setPax($args['adults']);
@@ -85,13 +85,12 @@ class WebUi
                     $Query->setCurrency($args['currency']);
                     $Query->setLimit(10);
                     try {
-                        $result = $Client->Search($Query);
+                        $result =   ['message' => 'Recieved Response from HotelsPro', 'Response' => $Client->Search($Query) ];
                     }catch(Exception $e)
                     {
                         $result =   ['message' => 'An error ocurred.', 'info' => $e ];
                     }
-                }
-                $params['pageresults']  =   ['message' => 'Recieved Response from HotelsPro', 'Response' => $result];
+                $params['pageresults']  =   $result;
                 break;
 
             case 'findHotel':
@@ -115,9 +114,12 @@ class WebUi
 
         ?>
         <html>
-        <head><style>
+        <head><title>HotelsPro Api WebUi</title>
+            <meta name="description" content="HotelsPro Api WebUi" />
+            <style>
                 label { display: block; }
-            </style></head>
+            </style>
+        </head>
         <body>
 
         <form action="?action=logout" method="POST">
@@ -158,16 +160,32 @@ class WebUi
 <pre>
 <?php print_r($params['pageresults']); ?>
 </pre>
-
+<?php self::Footer(); ?>
         </body>
         </html>
         <?php
 
     }
 
+    public static function Footer()
+    {
+        ?>
+
+        <div class="footer">
+            <div class="copyright"><a href="https://github.com/projectivemotion/php-hotelspro">HotelsPro Api WebUi</a> © <a href="http://amadomartinez.mx/">Amado Martinez</a></div>
+        </div>
+        <?php
+    }
+
     public static function printLoginPage()
     {
         ?><html>
+    <head><title>HotelsPro Api WebUi Login</title>
+        <meta name="description" content="HotelsPro Api WebUi" />
+        <style>
+            label { display: block; }
+        </style>
+    </head>
         <body>
         <h2>HotelsPro Api Test:</h2>
         <p>You must have an existing hotelspro.sqlite database in current working directory (where you called this script from.);</p>
@@ -181,8 +199,12 @@ class WebUi
         </form>
 
         <p>
-            You must have created hotelspro.sqlite
+            You must have an existing hotelspro.sqlite containing hotels and destinations.
+            see util/create-sqlite.sh
         </p>
+
+        <?php self::Footer(); ?>
+
         </body>
         </html>
             <?php
