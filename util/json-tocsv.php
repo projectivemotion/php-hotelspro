@@ -16,7 +16,7 @@ function json_to_csv($jsonarr, $colnames, $fhandle)
         {
             $vals[]     =   $jsonobj->$col;
         }
-        fputcsv($fhandle, $vals,"|");
+        fputcsv($fhandle, $vals,'$');
     }
 }
 

@@ -72,7 +72,7 @@ if [[ $# -gt 2 ]] ; then
 
      sqlite3 "$1" <<EOL
 .mode csv $3
-.separator "|"
+.separator "\\$"
 .import $2 $3
 EOL
 
