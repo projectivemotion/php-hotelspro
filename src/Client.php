@@ -12,6 +12,10 @@ namespace projectivemotion\HotelsPro;
 class Client
 {
     const HOTELCLASS    =   '\\projectivemotion\\HotelsPro\\Hotel';
+    const LIVEAPIHOST   =   'api2.hotelspro.com';
+    const TESTAPIHOST   =   'api-test.hotelspro.com';
+    const APIPATH       =   '/api/v2';
+
     const MATCH_EXACT   =   0;
     const MATCH_LIKE    =   1;
 
@@ -22,8 +26,30 @@ class Client
      * @var \PDO
      */
     protected $DB   =   NULL;
-    protected $api_path =   '/api/v2';
-    protected $api_hostname =   'api-test.hotelspro.com';
+
+    /**
+     * @var string LIVE or TEST
+     */
+    protected $api_mode =   '';
+
+
+    public function setLiveApi()
+    {
+        $this->api_mode = 'LIVE';
+    }
+
+    public function setTestApi()
+    {
+        $this->api_mode = 'TEST';
+    }
+
+    public function getApiHost()
+    {
+        if($this->api_mode  !=  'TEST')
+            return self::LIVEAPIHOST;
+
+        return self::TESTAPIHOST;
+    }
 
     public function getDB()
     {
@@ -117,9 +143,9 @@ class Client
         $url    =
             sprintf("https://%s:%s@%s%s/%s",
                 urlencode($this->username),
-                urlencode($this->password),
-                $this->api_hostname,
-                $this->api_path . $method,
+                ($this->password),
+                $this->getApiHost(),
+                self::APIPATH . $method,
                 $params ? '?' . http_build_query($params) : ''
             );
 
@@ -155,5 +181,6 @@ class Client
     {
         $this->setPassword($password);
         $this->setUsername($username);
+        $this->setLiveApi();
     }
 }

@@ -17,7 +17,12 @@ foreach($autoload_files as $autoload_file)
 // end autoloader finder
 
 if($argc < 3)
-    die("$argv[0] user pass");
+    die("$argv[0] user pass [test]");
+
+if(!file_exists('hotelspro.sqlite'))
+{
+    die("hotelspro.sqlite must be created before calling this demo. see util/create-sqlite.sh");
+}
 
 $username   =   $argv[1];
 $password   =   $argv[2];
@@ -25,7 +30,11 @@ $password   =   $argv[2];
 $searchq    =   new \projectivemotion\HotelsPro\Query();
 
 $client = new \projectivemotion\HotelsPro\Client($username, $password);
-$client->setDB(new \PDO('sqlite:../hotelspro.sqlite'));
+
+if($argc > 3 && $argv[3] ==  'TEST')
+    $client->setTestApi();
+
+$client->setDB(new \PDO('sqlite:hotelspro.sqlite'));
 $searchq->setCheckin(date('Y-m-d', time()+60*60*24*7));
 $searchq->setCheckout(date('Y-m-d', time()+60*60*24*7*3));
 $searchq->setClientNationality('us');
