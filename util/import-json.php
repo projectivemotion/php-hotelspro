@@ -6,6 +6,11 @@
  * Time: 10:13 PM
  */
 
+function removeAccents($str)
+{
+    return strtr(utf8_decode($str), utf8_decode('àáâãäçèéêëìíîïñòóôõöùúûüýÿÀÁÂÃÄÇÈÉÊËÌÍÎÏÑÒÓÔÕÖÙÚÛÜÝ'), 'aaaaaceeeeiiiinooooouuuuyyAAAAACEEEEIIIINOOOOOUUUUY');
+}
+
 function json_tosql($jsonarr, $colnames, PDOStatement $stmt)
 {
     foreach($jsonarr as $jsonobj)
@@ -13,7 +18,7 @@ function json_tosql($jsonarr, $colnames, PDOStatement $stmt)
         $vals   =   [];
         foreach($colnames as $col)
         {
-            $vals[]     =   trim($jsonobj->$col);
+            $vals[]     =   trim(removeAccents($jsonobj->$col));
         }
         $stmt->execute($vals);
     }
