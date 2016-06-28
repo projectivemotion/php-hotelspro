@@ -15,6 +15,6 @@
     }
   },
   "require": {
-    "projectivemotion/php-scraper-tools": "^0.1.0"
+    "projectivemotion/php-scraper-tools": "^0"
   }
 }
